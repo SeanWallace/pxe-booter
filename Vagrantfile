@@ -8,7 +8,8 @@ Vagrant.configure("2") do |config|
        v.cpus = 2
   end
 
-  config.vm.network "public_network", ip: "192.168.1.69/24", bridge: "en0: Ethernet"
+  config.vm.network "public_network", ip: "172.16.1.2", netmask:"255.255.0.0", bridge: "en6: AX88179A"
 
+  # Bootstrap services.
   config.vm.provision :shell, path: "vm_bootstrap.sh"
 end

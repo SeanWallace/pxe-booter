@@ -1,1 +1,4 @@
 .vagrant
+dhcpd.conf
+assets/harvester/harvester-*
+assets/harvester/version.yaml
