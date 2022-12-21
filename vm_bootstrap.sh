@@ -63,7 +63,7 @@ fi
 mkdir -p /opt/netbootxyz/config
 mkdir -p /opt/netbootxyz/assets
 ln -fs /vagrant/docker-compose.netbootxyz.yml /opt/netbootxyz/docker-compose.netbootxyz.yml
-ln -fs /vagrant/assets/harvester /opt/netbootxyz/assets/harvester
+ln -fs /vagrant/netbootxyz/assets/harvester /opt/netbootxyz/assets/harvester
 
 # Start netbootxyz.
 docker-compose -f /opt/netbootxyz/docker-compose.netbootxyz.yml up -d

@@ -1,0 +1,87 @@
+#!ipxe
+
+# If we don't have a hostname from DHCP then exit.
+isset ${hostname} || goto no_hostname
+
+set base-url http://172.16.1.2/harvester
+set host-base-url ${base-url}/host_configs/${hostname}
+set harvester-version v1.1.1
+
+
+
+echo Loading Menu ...
+# Figure out if client is 64-bit capable
+cpuid --ext 29 && set arch x86_64 || set arch x86
+cpuid --ext 29 && set archb 64 || set archb 32
+cpuid --ext 29 && set archl x86_64 || set archl i386
+set menu-timeout 10000
+:start
+menu Harvester Boot
+item --gap -- ---------------- Boot Choices  ----------------
+item --key i install  (I)nstall Harvester on ${hostname}
+item --key e bios     (E)xit
+item
+item --gap -- ---------------- Advanced configuration  ----------------
+item --key a kedit    (A)ppend kernel parameters
+item --key c config   (C)onfigure / View iPXE settings
+item --key s shell    (E)nter iPXE shell
+item
+choose --default exit --timeout ${menu-timeout} target || goto cancel ||
+set menu-timeout 0
+goto ${target}
+
+:failed_initrd
+echo Failed to download the initrd!
+sleep 10
+goto start
+
+:failed_kernel
+echo Failed to download the kernel!
+sleep 10
+goto start
+
+:kedit
+echo Appending rd.cmdline=ask
+set custom-params ${custom-params} rd.cmdline=ask
+goto linux
+
+:config
+config
+goto start
+
+:install
+echo === Harvester Install ===
+initrd ${base-url}/harvester-${harvester-version}-initrd-amd64 || goto failed_initrd
+kernel ${base-url}/harvester-${harvester-version}-vmlinuz-amd64 initrd=harvester-${harvester-version}-initrd-amd64 ip=dhcp net.ifnames=1 rd.cos.disable rd.noverifyssl console=tty1 root=live:${base-url}/harvester-${harvester-version}-rootfs-amd64.squashfs harvester.install.automatic=true harvester.install.config_url=${host-base-url}/harvester_config.yaml || goto failed_kernel
+imgstat
+
+sleep 5
+
+echo
+echo initramFS and kernel successfully downloaded.
+echo
+echo Starting up...
+boot --autofree --replace || goto failed
+goto start
+
+:shell
+echo Type 'exit' to get the back to the menu
+shell
+set menu-timeout 0
+goto start
+
+:cancel
+echo Menu cancelled, dropping to iPXE shell..
+goto shell
+
+:bios
+echo Exiting PXE ROM, dropping into BIOS ...
+exit 0
+
+:no_hostname
+echo No hostname was set from DHCP so this node has no identity. Check DHCP config and try again.
+sleep 10
+exit 1
+
+:exit
+exit

@@ -1,4 +1,4 @@
 .vagrant
 dhcpd.conf
-assets/harvester/harvester-*
-assets/harvester/version.yaml
+netbootxyz/assets/harvester/harvester-*
+netbootxyz/assets/harvester/version.yaml
