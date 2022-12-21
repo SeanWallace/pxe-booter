@@ -9,7 +9,8 @@ apt-get update
 # Install the DHCP server.
 if ! systemctl is-active isc-dhcp-server; then
   apt-get install -y isc-dhcp-server
-  apparmor_parser -R /etc/apparmor.d/usr.sbin.dhcpd
+  ln -s /etc/apparmor.d/usr.sbin.dhcpd /etc/apparmor.d/disable/
+  apparmor_parser -R /etc/apparmor.d/disable/usr.sbin.dhcpd
   sed -i 's/INTERFACESv4=""/INTERFACESv4="enp0s8"/g' /etc/default/isc-dhcp-server
   rm -f /etc/dhcp/dhcpd.conf
   ln -s /vagrant/dhcpd.conf /etc/dhcp/dhcpd.conf
@@ -64,6 +65,7 @@ mkdir -p /opt/netbootxyz/config
 mkdir -p /opt/netbootxyz/assets
 ln -fs /vagrant/docker-compose.netbootxyz.yml /opt/netbootxyz/docker-compose.netbootxyz.yml
 ln -fs /vagrant/netbootxyz/assets/harvester /opt/netbootxyz/assets/harvester
+ln -fs /vagrant/netbootxyz/config/harvester.ipxe /opt/netbootxyz/config/menus/harvester.ipxe
 
 # Start netbootxyz.
 docker-compose -f /opt/netbootxyz/docker-compose.netbootxyz.yml up -d

@@ -7,7 +7,8 @@ services:
     volumes:
       - /opt/netbootxyz/config:/config
       - /opt/netbootxyz/assets:/assets
-      - /vagrant/assets:/vagrant/assets
+      - /vagrant/netbootxyz/assets:/vagrant/netbootxyz/assets
+      - /vagrant/netbootxyz/config:/vagrant/netbootxyz/config
     ports:
       - 3001:3000
       - 69:69/udp
