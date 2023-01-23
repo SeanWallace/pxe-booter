@@ -57,6 +57,10 @@ if ! pm2 show Glass; then
   chmod u+x *.sh
   npm install
   pm2 --name Glass start npm -- start
+
+  # Make it run on startup.
+  pm2 startup
+  pm2 save
 fi
 
 
